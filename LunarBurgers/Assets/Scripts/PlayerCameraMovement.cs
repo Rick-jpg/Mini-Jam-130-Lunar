@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerCameraMovement : MonoBehaviour, IProcessInputHandler
 {
     [SerializeField] private PlayerInputManager inputManager;
+    [SerializeField] private Transform player;
 
     private Vector2 lookInput;
     [SerializeField] private float minClamp, maxClamp;
@@ -15,6 +16,7 @@ public class PlayerCameraMovement : MonoBehaviour, IProcessInputHandler
     void Start()
     {
         inputManager = GetComponentInParent<PlayerInputManager>();
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
@@ -31,9 +33,14 @@ public class PlayerCameraMovement : MonoBehaviour, IProcessInputHandler
 
     void HandleCameraMovement()
     {
-        cameraAngle += (lookInput.y * mouseSensitivity * Time.deltaTime);
+        float mouseX = lookInput.x * mouseSensitivity * Time.deltaTime;
+        float mouseY = lookInput.y * mouseSensitivity * Time.deltaTime;
+
+        cameraAngle += -mouseY;
         cameraAngle = Mathf.Clamp(cameraAngle, minClamp, maxClamp);
-        transform.eulerAngles = new Vector3(cameraAngle, 0, 0);
+
+        transform.localRotation = Quaternion.Euler(cameraAngle, 0, 0);
+        player.Rotate(Vector3.up * mouseX);
     }
 
 }
