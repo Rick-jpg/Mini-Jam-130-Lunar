@@ -5,4 +5,5 @@ using UnityEngine;
 public interface ICollectable 
 {
     void OnInteraction();
+    void Movement();
 }

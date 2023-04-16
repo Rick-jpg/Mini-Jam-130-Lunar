@@ -15,6 +15,17 @@ public class Jetpack : MonoBehaviour, IProcessInputHandler
 
     private float jetpackActivationThreshold = 0.7f;
     private float jetpackTime;
+
+    private void OnEnable()
+    {
+        JetpackPowerup.OnPickup += FillToMax;
+    }
+
+    private void OnDisable()
+    {
+        JetpackPowerup.OnPickup -= FillToMax;
+    }
+
     // Start is called before the first frame update
     void Start()
     {

@@ -37,6 +37,18 @@ public class PlayerController : MonoBehaviour, IProcessInputHandler
     public bool UseGravity { get { return useGravity; } private set { } }
     public Vector3 Movement { get { return movement; } private set { } }
 
+    [Header("Power up")]
+    [SerializeField] private float speedModifier = 1f;
+
+    private void OnEnable()
+    {
+        PowerupHudManager.OnSpeedPickupEnd += DisableModifier;
+    }
+
+    private void OnDisable()
+    {
+        PowerupHudManager.OnSpeedPickupEnd -= DisableModifier;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -120,13 +132,15 @@ public class PlayerController : MonoBehaviour, IProcessInputHandler
         {
             currentMovementSpeed -= deaccelerationRate * Time.deltaTime;
             currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, 0, maxAcceleration);
+
         }
         else
         {
-            currentMovementSpeed += accelerationRate * Time.deltaTime;
+            currentMovementSpeed += accelerationRate * speedModifier * Time.deltaTime;
             currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, startSpeed, maxAcceleration);
             savedVelocity = inputMovement;
         }
+
 
         movement = savedVelocity * currentMovementSpeed + Vector3.up * ySpeed;
 
@@ -139,5 +153,19 @@ public class PlayerController : MonoBehaviour, IProcessInputHandler
         moveInput = inputManager.moveInput;
         isJumping = inputManager.jumpInput;
     }
+
+    #region
+    public void EnableModifier()
+    {
+        speedModifier = 1.5f;
+        maxAcceleration = 8f;
+    }
+
+    public void DisableModifier()
+    {
+        speedModifier = 1f;
+        maxAcceleration = 6f;
+    }
+    #endregion
 
 }
